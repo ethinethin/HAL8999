@@ -134,6 +134,8 @@ def add_to_library(sentence):
             sentence[x] = "channel"
         if sentence[x][0:2] == "<:":
             sentence[x] = "emoji"
+        if sentence[x].lower() == "hal":
+            sentence[x] = "Robot"
 
     # Append the first two words to the first word library
     FIRST_WORDS.append([sentence[0], sentence[1]])
