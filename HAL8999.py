@@ -120,8 +120,9 @@ def add_to_library(sentence):
     if len(sentence) < 3:
         return
 
-    # Remove/replace websites, user mentions, and custom Discord emojis
     for x in range(0,len(sentence)):
+
+        # Remove/replace websites, user mentions, and custom Discord emojis
         if sentence[x][0:9] == "@everyone":
             sentence[x] = "everyone"
         if sentence[x][0:5] == "@here":
@@ -134,8 +135,21 @@ def add_to_library(sentence):
             sentence[x] = "channel"
         if sentence[x][0:2] == "<:":
             sentence[x] = "emoji"
+
+        # Change mentions of the bot to "buddy" - this is the best solution I have
+        # come up with for making sure the bot does not refer to himself
         if sentence[x].lower() == "hal":
-            sentence[x] = "Robot"
+            sentence[x] = "buddy"
+        if sentence[x].lower() == "hal?":
+            sentence[x] = "buddy?"
+        if sentence[x].lower() == "hal.":
+            sentence[x] = "buddy."
+        if sentence[x].lower() == "hal,":
+            sentence[x] = "buddy,"
+        if sentence[x].lower() == "hal!":
+            sentence[x] = "buddy!"
+        if sentence[x].lower() == "hal's":
+            sentence[x] = "buddy's"
 
     # Append the first two words to the first word library
     FIRST_WORDS.append([sentence[0], sentence[1]])
@@ -244,7 +258,10 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if str(message.server)[0:10] != "EasterTest":
+    if str(message.server)[0:10] == "EasterTest":
+        if str(message.content) == "#?HAL":
+            await bot.send_message(message.channel, construct_sentence())
+    else:
         if message.author.bot == False and message.content != "":
             message_new = ""
             for letter in message.content:
