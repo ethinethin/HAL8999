@@ -50,7 +50,7 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.0.0"
+BOT_VERS = "5.0.2"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
