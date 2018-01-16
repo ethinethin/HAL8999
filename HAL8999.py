@@ -258,10 +258,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if str(message.server)[0:10] == "EasterTest":
-        if str(message.content) == "#?HAL":
-            await bot.send_message(message.channel, construct_sentence())
-    else:
+    if str(message.server)[0:10] != "EasterTest":
         if message.author.bot == False and message.content != "":
             message_new = ""
             for letter in message.content:
