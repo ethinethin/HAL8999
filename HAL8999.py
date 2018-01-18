@@ -258,7 +258,9 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if str(message.server)[0:10] != "EasterTest":
+    if message.channel.is_private:
+        outp("Private message from " + str(message.author) + ": " + message.content)
+    elif str(message.server)[0:10] != "EasterTest":
         if message.author.bot == False and message.content != "":
             message_new = ""
             for letter in message.content:
