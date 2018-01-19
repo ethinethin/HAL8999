@@ -50,12 +50,12 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.0.2"
+BOT_VERS = "5.0.4"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
 # 1 and MAX. If that number is VALUE, construct a sentence.
-MAX = 40
+MAX = 45
 VALUE = 25
 
 """
@@ -259,22 +259,21 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if message.channel.is_private:
+        # Log and ignore private messages
         outp("Private message from " + str(message.author) + ": " + message.content)
+        f = open("PrivateMessages.txt","a")
+        f.write(timestamp() + " " + str(message.author) + ": " + message.content + "\n")
+        f.close()
     elif str(message.server)[0:10] != "EasterTest":
+        # Process non-bot, non-empty messages from all servers except the test server
         if message.author.bot == False and message.content != "":
-            message_new = ""
-            for letter in message.content:
-                if letter != "\n":
-                    message_new = message_new + letter
-                else:
-                    add_to_library(message_new)
-                    message_new = ""
-            add_to_library(message_new)
+            # Split messages by newlines - needed for multi-line messages
+            all_lines = message.content.split("\n")
+            for line in all_lines:
+                add_to_library(line)
+            # Save library to file
             save_library()
-
-            # Send a message at random - a 1% chance should give 2 - 4 messages per day.
-            # In practice, more messages have been generated than predicted, so I'm trying
-            # to fine tune the numbers here.
+            # Send a message to #general at random based on user specified global values
             if str(message.channel) == "general":
                 if randint(1,MAX) == VALUE:
                     sentence = construct_sentence()
