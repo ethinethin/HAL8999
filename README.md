@@ -2,8 +2,8 @@
 
 Ghetto Markov chain speech bot for Discord
 
-discord.py is required
+discord.py is required. See: https://github.com/Rapptz/discord.py
 
-First time running, an empty file called OutputBrain.txt is needed
+A file, Token.txt, is required, in which the Discord bot token is contained.
 
-Another file called Token.txt is also needed, which should contain a Discord bot token
+RunBot.sh can be used to easily start the bot

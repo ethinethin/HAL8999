@@ -50,7 +50,7 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.0.4"
+BOT_VERS = "5.0.5"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
@@ -99,6 +99,7 @@ def startup():
 LIBRARY = []
 FIRST_WORDS = []
 LOADED = False
+COUNT = 0
 
 def add_to_library(sentence):
     """Add word pairings from a sentence to the library"""
@@ -107,6 +108,7 @@ def add_to_library(sentence):
     global LIBRARY
     global FIRST_WORDS
     global LOADED
+    global COUNT
 
     # Save the sentence as is for filtering tests later
     if LOADED == True:
@@ -119,6 +121,8 @@ def add_to_library(sentence):
     # if sentence is too short to process, exit
     if len(sentence) < 3:
         return
+    else:
+        COUNT = COUNT + 1
 
     for x in range(0,len(sentence)):
 
@@ -205,8 +209,9 @@ def construct_sentence():
     # If the sentence is too short, try again
     if(len(sentence.split(" ")) < 5):
         sentence = construct_sentence()
-    if is_duplicated(sentence) == True:
-        outp("Sentence duplicated. Trying again.")
+    # If the sentence is duplicated, try to generate a new one, unless there are
+    # less than 100 sentences of training data
+    if is_duplicated(sentence) == True and COUNT >= 100:
         sentence = construct_sentence()
     return(sentence)
 
@@ -255,6 +260,14 @@ bot = commands.Bot(command_prefix=PREFIX)
 async def on_ready():
     """Bot connected and ready"""
     outp("Logged in as: [{}]".format(bot.user))
+    servers = []
+    for server in bot.servers:
+        servers.append(server.name)
+    outp("Connected to " + str(len(servers)) + " servers:")
+    for server in servers:
+        outp("\t" + server)
+
+
 
 @bot.event
 async def on_message(message):
