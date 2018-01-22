@@ -55,7 +55,7 @@ PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
 # 1 and MAX. If that number is VALUE, construct a sentence.
-MAX = 45
+MAX = 40
 VALUE = 25
 
 """
@@ -210,7 +210,7 @@ def construct_sentence():
     if(len(sentence.split(" ")) < 5):
         sentence = construct_sentence()
     # If the sentence is duplicated, try to generate a new one, unless there are
-    # less than 100 sentences of training data
+    # fewer than 100 sentences of training data
     if is_duplicated(sentence) == True and COUNT >= 100:
         sentence = construct_sentence()
     return(sentence)
@@ -266,8 +266,6 @@ async def on_ready():
     outp("Connected to " + str(len(servers)) + " servers:")
     for server in servers:
         outp("\t" + server)
-
-
 
 @bot.event
 async def on_message(message):
