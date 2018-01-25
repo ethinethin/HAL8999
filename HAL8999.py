@@ -50,7 +50,7 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.0.7"
+BOT_VERS = "5.0.8"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
@@ -99,7 +99,6 @@ def startup():
 LIBRARY = []
 FIRST_WORDS = []
 LOADED = False
-COUNT = 0
 
 def add_to_library(sentence):
     """Add word pairings from a sentence to the library"""
@@ -108,7 +107,6 @@ def add_to_library(sentence):
     global LIBRARY
     global FIRST_WORDS
     global LOADED
-    global COUNT
 
     # Save the sentence as is for filtering tests later
     if LOADED == True:
@@ -121,8 +119,6 @@ def add_to_library(sentence):
     # if sentence is too short to process, exit
     if len(sentence) < 3:
         return
-    else:
-        COUNT = COUNT + 1
 
     for x in range(0,len(sentence)):
 
@@ -181,13 +177,8 @@ def is_duplicated(sentence):
     f.close()
     return False
 
-SENTENCES_REQUIRED = 500
 def construct_sentence():
     """Construct a sentence based on the library pairings"""
-    # If memory isn't long enough, return nothing
-    if COUNT < SENTENCES_REQUIRED:
-        return ""
-
     # Start with a random first word pair
     sentence = FIRST_WORDS[randint(0,len(FIRST_WORDS)-1)]
 
@@ -217,7 +208,11 @@ def construct_sentence():
     # If the sentence is duplicated, try to generate a new one, unless there are
     # fewer than 100 sentences of training data
     if is_duplicated(sentence) == True:
-        sentence = construct_sentence()
+        try:
+            sentence = construct_sentence()
+        except:
+            outp("Attempted to construct a unique sentence but could not.")
+            return("")
     return(sentence)
 
 def load_library():
