@@ -50,7 +50,7 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.0.5"
+BOT_VERS = "5.0.7"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
@@ -181,8 +181,13 @@ def is_duplicated(sentence):
     f.close()
     return False
 
+SENTENCES_REQUIRED = 500
 def construct_sentence():
     """Construct a sentence based on the library pairings"""
+    # If memory isn't long enough, return nothing
+    if COUNT < SENTENCES_REQUIRED:
+        return ""
+
     # Start with a random first word pair
     sentence = FIRST_WORDS[randint(0,len(FIRST_WORDS)-1)]
 
@@ -211,7 +216,7 @@ def construct_sentence():
         sentence = construct_sentence()
     # If the sentence is duplicated, try to generate a new one, unless there are
     # fewer than 100 sentences of training data
-    if is_duplicated(sentence) == True and COUNT >= 100:
+    if is_duplicated(sentence) == True:
         sentence = construct_sentence()
     return(sentence)
 
@@ -288,8 +293,13 @@ async def on_message(message):
             if str(message.channel) == "general":
                 if randint(1,MAX) == VALUE:
                     sentence = construct_sentence()
-                    outp("Sending to channel: " + sentence)
-                    await asyncio.sleep(4)
-                    await bot.send_message(message.channel, sentence)
+                    if sentence != "":
+                        await asyncio.sleep(4)
+                        try:
+                            await bot.send_message(message.channel, sentence)
+                            outp("Sending to channel: " + sentence)
+                        except:
+                            outp("Error raised while trying to send sentence")
+                            pass
 
 startup()
