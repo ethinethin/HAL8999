@@ -280,7 +280,7 @@ async def on_message(message):
         f.write(timestamp() + " " + str(message.author) + ": " + message.content + "\n")
         f.close()
     elif str(message.channel) == "general":
-        # Process non-bot, non-empty messages from all servers except the test server
+        # Only listen to non-bot, non-empty messages in #general channels
         if message.author.bot == False and message.content != "":
             # Split messages by newlines - needed for multi-line messages
             all_lines = message.content.split("\n")
