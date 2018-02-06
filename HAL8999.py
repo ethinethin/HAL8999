@@ -50,7 +50,7 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.0.8"
+BOT_VERS = "5.1.0"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
@@ -75,10 +75,14 @@ def outp(str):
 def load_token():
     """Load the bot token from file"""
     outp("Loading bot token from Token.txt")
-    f = open("Token.txt","r")
-    lines = f.readlines()
-    for line in lines:
-        return line[0:len(line)-1]
+    try:
+        f = open("Token.txt","r")
+        lines = f.readlines()
+        for line in lines:
+            return line[0:len(line)-1]
+    except:
+        outp("No file Token.txt. Cannot connect to Discord.")
+        sys.exit()
 
 def startup():
     """Bot startup"""
@@ -275,7 +279,7 @@ async def on_message(message):
         f = open("PrivateMessages.txt","a")
         f.write(timestamp() + " " + str(message.author) + ": " + message.content + "\n")
         f.close()
-    elif str(message.server)[0:10] != "EasterTest":
+    elif str(message.channel) == "general":
         # Process non-bot, non-empty messages from all servers except the test server
         if message.author.bot == False and message.content != "":
             # Split messages by newlines - needed for multi-line messages
@@ -285,16 +289,15 @@ async def on_message(message):
             # Save library to file
             save_library()
             # Send a message to #general at random based on user specified global values
-            if str(message.channel) == "general":
-                if randint(1,MAX) == VALUE:
-                    sentence = construct_sentence()
-                    if sentence != "":
-                        await asyncio.sleep(4)
-                        try:
-                            await bot.send_message(message.channel, sentence)
-                            outp("Sending to channel: " + sentence)
-                        except:
-                            outp("Error raised while trying to send sentence")
-                            pass
+            if randint(1,MAX) == VALUE:
+                sentence = construct_sentence()
+                if sentence != "":
+                    await asyncio.sleep(4)
+                    try:
+                        await bot.send_message(message.channel, sentence)
+                        outp("Sending to channel: " + sentence)
+                    except:
+                        outp("Error raised while trying to send sentence")
+                        pass
 
 startup()
