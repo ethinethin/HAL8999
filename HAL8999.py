@@ -50,7 +50,7 @@ from random import randint
 
 # Bot identification information
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.1.0"
+BOT_VERS = "5.1.3"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
@@ -112,12 +112,6 @@ def add_to_library(sentence):
     global FIRST_WORDS
     global LOADED
 
-    # Save the sentence as is for filtering tests later
-    if LOADED == True:
-        f = open("UnfilteredLines.txt","a")
-        f.write(sentence+"\n")
-        f.close()
-
     # Split the sentence into words
     sentence = sentence.split(" ")
     # if sentence is too short to process, exit
@@ -132,28 +126,28 @@ def add_to_library(sentence):
         if sentence[x][0:5] == "@here":
             sentence[x] = "here"
         if sentence[x][0:4] == "http" or sentence[x][0:5] == "<http":
-            sentence[x] = "website"
+            sentence[x] = ""
         if sentence[x][0:2] == "<@":
-            sentence[x] = "user"
+            sentence[x] = "Dusk"
         if sentence[x][0:2] == "<#":
-            sentence[x] = "channel"
+            sentence[x] = ""
         if sentence[x][0:2] == "<:":
-            sentence[x] = "emoji"
+            sentence[x] = ""
 
         # Change mentions of the bot to "buddy" - this is the best solution I have
         # come up with for making sure the bot does not refer to himself
         if sentence[x].lower() == "hal":
-            sentence[x] = "buddy"
+            sentence[x] = "Dusk"
         if sentence[x].lower() == "hal?":
-            sentence[x] = "buddy?"
+            sentence[x] = "Dusk?"
         if sentence[x].lower() == "hal.":
-            sentence[x] = "buddy."
+            sentence[x] = "Dusk."
         if sentence[x].lower() == "hal,":
-            sentence[x] = "buddy,"
+            sentence[x] = "Dusk,"
         if sentence[x].lower() == "hal!":
-            sentence[x] = "buddy!"
+            sentence[x] = "Dusk!"
         if sentence[x].lower() == "hal's":
-            sentence[x] = "buddy's"
+            sentence[x] = "Dusk's"
 
     # Append the first two words to the first word library
     FIRST_WORDS.append([sentence[0], sentence[1]])
@@ -300,4 +294,8 @@ async def on_message(message):
                         outp("Error raised while trying to send sentence")
                         pass
 
-startup()
+try:
+    startup()
+except:
+    outp("Error received: "+str(sys.exc_info()[0]))
+    sys.exit()
