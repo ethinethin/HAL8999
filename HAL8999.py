@@ -49,14 +49,22 @@ import sys
 from random import randint
 
 # Bot identification information
+BOT_OWNER = "Dusk"
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.1.3"
+BOT_VERS = "5.1.5"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
 # 1 and MAX. If that number is VALUE, construct a sentence.
 MAX = 40
 VALUE = 25
+
+# terminal colors
+class cols:
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    RED = '\033[91m'
+    DEFAULT = '\033[0m'
 
 """
 
@@ -128,7 +136,7 @@ def add_to_library(sentence):
         if sentence[x][0:4] == "http" or sentence[x][0:5] == "<http":
             sentence[x] = ""
         if sentence[x][0:2] == "<@":
-            sentence[x] = "Dusk"
+            sentence[x] = BOT_OWNER
         if sentence[x][0:2] == "<#":
             sentence[x] = ""
         if sentence[x][0:2] == "<:":
@@ -137,24 +145,24 @@ def add_to_library(sentence):
         # Change mentions of the bot to "buddy" - this is the best solution I have
         # come up with for making sure the bot does not refer to himself
         if sentence[x].lower() == "hal":
-            sentence[x] = "Dusk"
+            sentence[x] = BOT_OWNER
         if sentence[x].lower() == "hal?":
-            sentence[x] = "Dusk?"
+            sentence[x] = BOT_OWNER + "?"
         if sentence[x].lower() == "hal.":
-            sentence[x] = "Dusk."
+            sentence[x] = BOT_OWNER + "."
         if sentence[x].lower() == "hal,":
-            sentence[x] = "Dusk,"
+            sentence[x] = BOT_OWNER + ","
         if sentence[x].lower() == "hal!":
-            sentence[x] = "Dusk!"
+            sentence[x] = BOT_OWNER + "!"
         if sentence[x].lower() == "hal's":
-            sentence[x] = "Dusk's"
+            sentence[x] = BOT_OWNER + "'s"
 
     # Append the first two words to the first word library
     FIRST_WORDS.append([sentence[0], sentence[1]])
 
     # Report to console
     if LOADED == True:
-        outp("Adding to library: " + ' '.join(sentence))
+        outp(cols.BLUE + "Adding to library: " + cols.DEFAULT + ' '.join(sentence))
 
     # Add every word pairing to the library
     for x in range(0, len(sentence)):
@@ -269,7 +277,7 @@ async def on_ready():
 async def on_message(message):
     if message.channel.is_private:
         # Log and ignore private messages
-        outp("Private message from " + str(message.author) + ": " + message.content)
+        outp(cols.RED + "Private message from " + str(message.author) + ": " + cols.DEFAULT + message.content)
         f = open("PrivateMessages.txt","a")
         f.write(timestamp() + " " + str(message.author) + ": " + message.content + "\n")
         f.close()
@@ -289,7 +297,7 @@ async def on_message(message):
                     await asyncio.sleep(4)
                     try:
                         await bot.send_message(message.channel, sentence)
-                        outp("Sending to channel: " + sentence)
+                        outp(cols.GREEN + "Sending to channel: " + cols.DEFAULT + sentence)
                     except:
                         outp("Error raised while trying to send sentence")
                         pass
