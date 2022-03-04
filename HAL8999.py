@@ -49,9 +49,9 @@ import sys
 from random import randint
 
 # Bot identification information
-BOT_OWNER = "Dusk"
+BOT_OWNER = "Ethinethin"
 BOT_NAME = "HAL8999"
-BOT_VERS = "5.1.5"
+BOT_VERS = "6.0.0"
 PREFIX = "#?"
 
 # Values for sentence probability - on message, generate a random number between
@@ -267,15 +267,15 @@ async def on_ready():
     """Bot connected and ready"""
     outp("Logged in as: [{}]".format(bot.user))
     servers = []
-    for server in bot.servers:
-        servers.append(server.name)
+    for guild in bot.guilds:
+        servers.append(guild.name)
     outp("Connected to " + str(len(servers)) + " servers:")
     for server in servers:
         outp("\t" + server)
 
 @bot.event
 async def on_message(message):
-    if message.channel.is_private:
+    if isinstance(message.channel, discord.abc.PrivateChannel):
         # Log and ignore private messages
         outp(cols.RED + "Private message from " + str(message.author) + ": " + cols.DEFAULT + message.content)
         f = open("PrivateMessages.txt","a")
@@ -291,12 +291,12 @@ async def on_message(message):
             # Save library to file
             save_library()
             # Send a message to #general at random based on user specified global values
-            if randint(1,MAX) == VALUE:
+            if randint(0,MAX) == VALUE:
                 sentence = construct_sentence()
                 if sentence != "":
                     await asyncio.sleep(4)
                     try:
-                        await bot.send_message(message.channel, sentence)
+                        await message.channel.send(sentence)
                         outp(cols.GREEN + "Sending to channel: " + cols.DEFAULT + sentence)
                     except:
                         outp("Error raised while trying to send sentence")
